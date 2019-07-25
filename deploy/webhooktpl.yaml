@@ -1,0 +1,27 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  labels:
+    app: sidecar-injector
+  name: sidecar-webhook
+webhooks:
+- clientConfig:
+    caBundle: ${CA_BUNDLE}
+    service:
+      name: mywebhook-svc
+      namespace: xiong
+      path: /mutating-pods
+  failurePolicy: Ignore
+  name: sidecar-webhook.xiong.cn
+  namespaceSelector:
+    matchLabels:
+      sidecar-injector: enabled
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webhook-example
+  namespace: xiong
+spec:
+  containers:
+  - image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    name: example

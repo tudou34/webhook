@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: mywebhook
+    mywebhook: "true"
+  name: mywebhook-deployment
+  namespace: xiong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mywebhook
+      mywebhook: "true"
+  template:
+    metadata:
+      labels:
+        app: mywebhook
+        mywebhook: "true"
+    spec:
+      containers:
+      - args:
+        - --tls-cert-file=/webhook.local.config/certificates/cert.pem
+        - --tls-private-key-file=/webhook.local.config/certificates/key.pem
+        - --alsologtostderr
+        - -v=4
+        - 2>&1
+        image: gcr.io/kubernetes-e2e-test-images/k8s-sample-admission-webhook-amd64:xiong
+        imagePullPolicy: IfNotPresent
+        name: mywebhook
+        volumeMounts:
+        - mountPath: /webhook.local.config/certificates
+          name: webhook-certs
+          readOnly: true
+      volumes:
+      - name: webhook-certs
+        secret:
+          defaultMode: 420
+          secretName: mywebhook-secret
